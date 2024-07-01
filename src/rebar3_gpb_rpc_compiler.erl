@@ -96,14 +96,15 @@ clean(AppInfo) ->
     TargetHrlDir = filename:join([AppDir,
         proplists:get_value(o_hrl, GpbRpcOpts,
             ?DEFAULT_OUT_HRL_DIR)]),
+    ModuleNameSuffix = proplists:get_value(module_name_suffix, GpbRpcOpts, ?DEFAULT_MODULE_SUFFIX),
     ProtoFiles = find_proto_files(AppDir, GpbOpts),
     RouterFile = filename:rootname(filename:basename(proplists:get_value(router, GpbRpcOpts))),
     GeneratedRootFiles = [filename:rootname(filename:basename(ProtoFile)) ||
         ProtoFile <- lists:sort([RouterFile | ProtoFiles])],
 
-    GeneratedErlFiles = [filename:join([TargetErlDir, F ++ ".erl"]) ||
+    GeneratedErlFiles = [filename:join([TargetErlDir, F ++ ModuleNameSuffix ++ ".erl"]) ||
         F <- GeneratedRootFiles],
-    GeneratedHrlFiles = [filename:join([TargetHrlDir, F ++ ".hrl"]) ||
+    GeneratedHrlFiles = [filename:join([TargetHrlDir, F ++ ModuleNameSuffix ++ ".hrl"]) ||
         F <- GeneratedRootFiles],
     rebar_api:debug("deleting [~p, ~p]",
         [GeneratedErlFiles, GeneratedHrlFiles]),
